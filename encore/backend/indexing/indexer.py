@@ -40,13 +40,16 @@ class Indexer(object):
         'mov': None,
         'mp3': handlers.MP3Handler(,
         'mp4': None,
-        'moeg': None,
+        'mpeg': None,
         'mpg': None,
         'ogg': None,
         'ogm': None,
         'png': None,
         'wmv': None
     }
+
+    def __init__(self):
+        self.handlers['jpeg'] = self.handlers['jpg']
 
     def run(self):
         """
