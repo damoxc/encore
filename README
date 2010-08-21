@@ -1,0 +1,6 @@
+Encore is a media centre designed for GNOME.
+
+To install just run:
+
+python setup.py build
+sudo python setup.py install
