@@ -1,5 +1,5 @@
 #
-# encore/model/__init__.py
+# encore/configuration.py
 #
 # Copyright (C) 2010 Damien Churchill <damoxc@gmail.com>
 #
@@ -20,5 +20,7 @@
 #   Boston, MA    02110-1301, USA.
 #
 
-class Database(object):
-    pass
+class Configuration(object):
+
+    def __init__(self, config_dir):
+        self.config_dir = config_dir
