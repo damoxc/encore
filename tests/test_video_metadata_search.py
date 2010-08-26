@@ -24,6 +24,35 @@ from encore.backend.indexing.video_metadata_search import *
 
 from tests import EncoreTest
 
+class TestVideoMetadataMovie(EncoreTest):
+    """
+    Tests encore.backend.indexing.video_video_info.get_movie_metadata
+    """
+
+    def test_get_movie_metadata(self):
+        movie = get_movie_metadata('transformers')
+        self.assertTrue(isinstance(movie, MovieMetadata))
+
+    def test_get_movie_name(self):
+        movie = get_movie_metadata('transformers')
+        self.assertEqual(movie.name, 'Transformers')
+
+    def test_get_movie_released(self):
+        movie = get_movie_metadata('transformers')
+        self.assertEqual(movie.released, '2007-07-04')
+
+    def test_get_movie_id(self):
+        movie = get_movie_metadata('transformers')
+        self.assertEqual(movie.id, '1858')
+
+    def test_get_movie_poster(self):
+        movie = get_movie_metadata('transformers')
+        self.assertTrue(movie.poster)
+
+    def test_get_movie_backdrop(self):
+        movie = get_movie_metadata('transformers')
+        self.assertTrue(movie.backdrop)
+
 class TestVideoMetadataStripPath(EncoreTest):
     """
     Tests encore.backend.indexing.video_video_info.strip_filename

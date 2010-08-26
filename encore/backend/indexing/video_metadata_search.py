@@ -33,11 +33,12 @@ TVDB_KEY = '5B4FABAEAB3DAB49'
 # The Movie DB key
 TMDB_KEY = '9b41e54a1df985e5d9e90cab7646e5ca'
 
-# Configure the moviedb api
+# Configure and create the moviedb api
 tmdb_config['key'] = TMDB_KEY
+mdb = MovieDb()
 
-# Configure the tvdb api
-TvDb = Tvdb(apikey=TVDB_KEY)
+# Create the tvdb api
+tvdb = Tvdb(apikey=TVDB_KEY)
 
 # Title split keywords
 TITLE_SPLIT_KEYWORDS = [
@@ -62,6 +63,37 @@ SERIES_PATH_RE = [
 ]
 
 VideoFileInfo = namedtuple('VideoFileInfo', 'title episode season')
+
+class VideoMetadata(object):
+
+    def __init__(self, data=None):
+        if not data:
+            data = {}
+        self.__data = data
+
+    def __getattr__(self, key):
+        if key not in self.__data:
+            raise AttributeError
+        return self.__data[key]
+
+class MovieMetadata(VideoMetadata):
+    
+    @property
+    def poster(self):
+        return self.images[0]
+
+    @property
+    def backdrop(self):
+        return self.images[1]
+
+class SeriesMetadata(VideoMetadata):
+    pass
+
+class SeasonMetadata(VideoMetadata):
+    pass
+
+class EpisodeMetadata(VideoMetadata):
+    pass
 
 def strip_filename(filename):
     """
@@ -132,21 +164,36 @@ def parse_path(path):
         episode = int(match.group('episode'))
     )
 
-class MetadataSearchBase(object):
+def get_movie_metadata(title):
     """
-    Base class for both the SeriesMetadataSearch and MovieMetadataaSearch
-    that allows Encore to gather additional information about videos.
+    Search themoviedb.org for metadata for the movie specified.
+
+    :param title: The movie title
+    :type title: str
+    :returns: Information about the movie
+    :rtype: MovieMetadata
+    """
+
+    results = mdb.search(title)
+    for result in results:
+        if title == result['name'].lower():
+            break
+        result = None
+
+    if result is None:
+        return
+
+    return MovieMetadata(result)
+
+def get_movie_info(movie_id):
+    """
+    Search themoviedb.org for images for the movie specified.
+
+    :param movie_id: The moviedb.org movie id
+    :type movie_id: str or int
+    :returns: Detailed information about the movie
+    :rtype: MovieMetadata
     """
     
-    def get_metadata(self):
-        raise NotImplementedError
-
-class SeriesMetadataSearch(MetadataSearchBase):
-    
-    def get_metadata(self):
-        pass
-
-class MovieMetadataSearch(MetadataSearchBase):
-    
-    def get_metadata(self):
-        pass
+    movie_info = mdb.getMovieInfo(movie_id)
+    return MovieMetadata(movie_info)
