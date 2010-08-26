@@ -38,7 +38,7 @@ tmdb_config['key'] = TMDB_KEY
 mdb = MovieDb()
 
 # Create the tvdb api
-tvdb = Tvdb(apikey=TVDB_KEY)
+tvdb = Tvdb(apikey=TVDB_KEY,banners=True)
 
 # Title split keywords
 TITLE_SPLIT_KEYWORDS = [
@@ -72,9 +72,10 @@ class VideoMetadata(object):
         self.__data = data
 
     def __getattr__(self, key):
-        if key not in self.__data:
+        try:
+            return self.__data[key]
+        except:
             raise AttributeError
-        return self.__data[key]
 
 class MovieMetadata(VideoMetadata):
     
@@ -195,5 +196,16 @@ def get_movie_info(movie_id):
     :rtype: MovieMetadata
     """
     
-    movie_info = mdb.getMovieInfo(movie_id)
-    return MovieMetadata(movie_info)
+    return MovieMetadata(mdb.getMovieInfo(movie_id))
+
+def get_series_metadata(title):
+    """
+    Search themoviedb.org for metadata for the movie specified.
+
+    :param title: The series title
+    :type title: str
+    :returns: Information about the series
+    :rtype: SeriesMetadata
+    """
+
+    return SeriesMetadata(tvdb[title])

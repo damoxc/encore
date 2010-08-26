@@ -53,6 +53,15 @@ class TestVideoMetadataMovie(EncoreTest):
         movie = get_movie_metadata('transformers')
         self.assertTrue(movie.backdrop)
 
+class TestVideoMetadataSeries(EncoreTest):
+    """
+    encore.backend.indexing.video_video_info.get_series_metadata
+    """
+
+    def test_get_series_metadata(self):
+        series = get_series_metadata('true blood')
+        self.assertTrue(isinstance(series, SeriesMetadata))
+
 class TestVideoMetadataStripPath(EncoreTest):
     """
     Tests encore.backend.indexing.video_video_info.strip_filename
