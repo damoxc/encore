@@ -24,6 +24,21 @@ from encore.backend.indexing.video_metadata_search import *
 
 from tests import EncoreTest
 
+class TestVideoMetadataStripPath(EncoreTest):
+    """
+    Tests encore.backend.indexing.video_video_info.strip_filename
+    """
+
+    def test_simple_filename(self):
+        filename = 'Futurama s02e05 something.avi'
+        self.assertEqual(strip_filename(filename.lower()), 
+            'futurama s02e05 something')
+
+    def test_complex_filename(self):
+        filename = 'Futurama_s02e05_something.avi'
+        self.assertEqual(strip_filename(filename.lower()), 
+            'futurama s02e05 something')
+
 class TestVideoMetadataParsePath(EncoreTest):
     """
     Tests encore.backend.indexing.video_video_info.parse_path

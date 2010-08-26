@@ -63,6 +63,27 @@ SERIES_PATH_RE = [
 
 VideoFileInfo = namedtuple('VideoFileInfo', 'title episode season')
 
+def strip_filename(filename):
+    """
+    This function strips out and cleans a video filename
+
+    :param filename: The filename to strip
+    :type filename: str
+    :returns: The stripped filename
+    :rtype: str
+    """
+
+    filename = os.path.splitext(filename)[0]
+
+    # Strip .,-_ from the filename
+    for item in TITLE_STRIP_SEARCH:
+        filename = filename.replace(item, ' ')
+
+    # Split title at keywords
+    for item in TITLE_SPLIT_KEYWORDS:
+        filename = filename.split(item)[0]
+    return filename.strip()
+
 def parse_path(path):
     """
     Parse the path to the video file. Parsing the whole path allows for
@@ -80,17 +101,9 @@ def parse_path(path):
 
     # Lowercase path and get the filename minus extension
     path = path.lower()
-    filename = os.path.basename(path)
-    filename = os.path.splitext(filename)[0]
 
-    # Strip .,-_ from the filename
-    for item in TITLE_STRIP_SEARCH:
-        filename = filename.replace(item, ' ')
-
-    # Split title at keywords
-    for item in TITLE_SPLIT_KEYWORDS:
-        filename = filename.split(item)[0]
-    filename = filename.strip()
+    # Strip the filename
+    filename = strip_filename(os.path.basename(path))
 
     # Search the path for the title, season and episode
     for regexp in SERIES_PATH_RE:
@@ -127,3 +140,13 @@ class MetadataSearchBase(object):
     
     def get_metadata(self):
         raise NotImplementedError
+
+class SeriesMetadataSearch(MetadataSearchBase):
+    
+    def get_metadata(self):
+        pass
+
+class MovieMetadataSearch(MetadataSearchBase):
+    
+    def get_metadata(self):
+        pass
