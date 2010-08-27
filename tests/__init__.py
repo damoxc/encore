@@ -49,8 +49,6 @@ class EncoreTest(unittest.TestCase):
         """
         shutil.rmtree(self.test_dir)
         shutil.rmtree(self.test_cfg_dir)
-        shutil.rmtree(self.data_dir)
-
 
 class EncoreDbTest(EncoreTest):
     """
