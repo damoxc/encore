@@ -35,6 +35,9 @@ class TestTagGetter(tests.EncoreTest):
         tag_getter = TagGetter(os.path.join(self.data_dir, 'test.mp3'))
         self.assertTrue(isinstance(tag_getter, TagGetter))
 
+    def test_missing_file(self):
+        self.assertRaises(IOError, TagGetter, 'missing.mp3')
+
     def test_get_tags(self):
         """
         Test TagGetter.get_tags.

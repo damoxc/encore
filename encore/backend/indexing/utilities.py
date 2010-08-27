@@ -20,6 +20,7 @@
 #   Boston, MA    02110-1301, USA.
 #
 
+import os
 import gst
 import logging
 import datetime
@@ -32,6 +33,11 @@ class TagGetter(object):
     """
 
     def __init__(self, filename):
+        # Ensure that the file exists as otherwise the message.pop() method
+        # causes this to hang.
+        if not os.path.isfile(filename):
+            raise IOError("No such file: '%s'" % filename)
+
         self.tags = {}
 
         self.pipeline = gst.parse_launch(
