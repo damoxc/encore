@@ -21,6 +21,7 @@
 #
 
 import os
+import shutil
 import tempfile
 
 from twisted.trial import unittest
@@ -41,6 +42,15 @@ class EncoreTest(unittest.TestCase):
         self.test_cfg_dir = tempfile.mkdtemp(prefix='encore-tests+')
         self.config = Configuration(self.test_cfg_dir)
         self.data_dir = os.path.dirname(__file__) + '/data'
+
+    def tearDown(self):
+        """
+        Remove the temporary files created in the test.
+        """
+        shutil.rmtree(self.test_dir)
+        shutil.rmtree(self.test_cfg_dir)
+        shutil.rmtree(self.data_dir)
+
 
 class EncoreDbTest(EncoreTest):
     """
