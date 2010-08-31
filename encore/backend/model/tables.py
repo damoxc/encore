@@ -27,6 +27,7 @@ meta = MetaData()
 
 movies = Table('movies', meta,
     Column('id', Integer, primary_key=True),
+    Column('movie_id', String(10)),
     Column('path', String(200)),
     Column('description', Text),
     Column('genre', String(100)),
@@ -37,6 +38,7 @@ movies = Table('movies', meta,
 
 shows = Table('shows', meta,
     Column('id', Integer, primary_key=True),
+    Column('series_id', String(10)),
     Column('title', String(100)),
     Column('description', Text),
     Column('genre', String(100)),
