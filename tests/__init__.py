@@ -26,7 +26,7 @@ import tempfile
 
 from twisted.trial import unittest
 
-from encore.configuration import Configuration
+from encore.config import Config
 from encore.model import Database
 
 class EncoreTest(unittest.TestCase):
@@ -40,7 +40,7 @@ class EncoreTest(unittest.TestCase):
         """
         self.test_dir = tempfile.mkdtemp(prefix='encore-tests+')
         self.test_cfg_dir = tempfile.mkdtemp(prefix='encore-tests+')
-        self.config = Configuration(self.test_cfg_dir)
+        self.config = Config(self.test_cfg_dir)
         self.data_dir = os.path.dirname(__file__) + '/data'
 
     def tearDown(self):
