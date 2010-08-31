@@ -25,7 +25,7 @@ import re
 from collections import namedtuple
 
 from encore.lib.tmdb import MovieDb, config as tmdb_config
-from encore.lib.tvdb import Tvdb
+from encore.lib.tvdb import TvDb
 
 # The TV DB key
 TVDB_KEY = '5B4FABAEAB3DAB49'
@@ -38,7 +38,7 @@ tmdb_config['key'] = TMDB_KEY
 mdb = MovieDb()
 
 # Create the tvdb api
-tvdb = Tvdb(apikey=TVDB_KEY,banners=True)
+tvdb = TvDb(TVDB_KEY)
 
 # Title split keywords
 TITLE_SPLIT_KEYWORDS = [
@@ -69,11 +69,11 @@ class VideoMetadata(object):
     def __init__(self, data=None):
         if not data:
             data = {}
-        self.__data = data
+        self._data = data
 
     def __getattr__(self, key):
         try:
-            return self.__data[key]
+            return self._data[key]
         except:
             raise AttributeError
 
@@ -88,10 +88,19 @@ class MovieMetadata(VideoMetadata):
         return self.images[1]
 
 class SeriesMetadata(VideoMetadata):
-    pass
+
+    @property
+    def poster(self):
+        for poster in self._banners['poster']['680x100']:
+            pass
+    
+    def __getitem__(self, key):
+        return SeasonMetadata(self._data[key])
 
 class SeasonMetadata(VideoMetadata):
-    pass
+
+    def __getitem__(self, key):
+        return EpisodeMetadata(self._data[key])
 
 class EpisodeMetadata(VideoMetadata):
     pass
@@ -200,7 +209,7 @@ def get_movie_info(movie_id):
 
 def get_series_metadata(title):
     """
-    Search themoviedb.org for metadata for the movie specified.
+    Search thetvdb.org for metadata for the series specified.
 
     :param title: The series title
     :type title: str
@@ -209,3 +218,33 @@ def get_series_metadata(title):
     """
 
     return SeriesMetadata(tvdb[title])
+
+def get_season_metadata(title, season):
+    """
+    Search thetvdb.org for metadata for the season specified.
+
+    :param title: The series title
+    :type title: str
+    :param season: The season number
+    :type season: int
+    :returns: Information about the season
+    :rtype: SeasonMetadata
+    """
+
+    return SeasonMetadata(tvdb[title][season])
+
+def get_episode_metadata(title, season, episode):
+    """
+    Search thetvdb.or for metadata for the episode specified.
+
+    :param title: The series title
+    :type title: str
+    :param season: The season number
+    :type season: int
+    :param episode: The episode number
+    :type episode: int
+    :returns: Information about the season
+    :rtype: EpisodeMetadata
+    """
+
+    return EpisodeMetadata(tvdb[title][season][episode])

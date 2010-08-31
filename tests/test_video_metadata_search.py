@@ -62,6 +62,13 @@ class TestVideoMetadataSeries(EncoreTest):
         series = get_series_metadata('true blood')
         self.assertTrue(isinstance(series, SeriesMetadata))
 
+    def test_get_series_id(self):
+        series = get_series_metadata('true blood')
+        seriesl.assertEqual(series.id, '82283')
+
+    def test_get_series_banner(self):
+        pass
+
 class TestVideoMetadataStripPath(EncoreTest):
     """
     Tests encore.backend.indexing.video_video_info.strip_filename
