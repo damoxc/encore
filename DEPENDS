@@ -1,0 +1,13 @@
+Dependencies
+============
+
+ * python >= 2.6
+ * twisted >= 10.0
+ * twisted-web >= 10.0
+ * setuptools
+ * gettext
+ * pyxdg
+ * pygtk
+ * pyclutter
+ * pyclutter-gst
+ * pyclutter-gtk

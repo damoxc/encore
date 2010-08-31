@@ -1,6 +1,32 @@
+Encore Media Center
+===================
+
 Encore is a media centre designed for GNOME.
 
-To install just run:
+Homepage: http://github.com/damoxc/encore
 
-python setup.py build
-sudo python setup.py install
+Authors
+-------
+
+ * [Damien Churchill](damoxc) <damoxc@gmail.com
+
+License
+-------
+Encore is licensed under the GNU GPLv3 license.
+
+Contact/Support
+---------------
+
+You can contact the developers of Encore in the irc channel #encore on
+FreeNode.
+
+Installation
+------------
+
+See: DEPENDS for a full list of dependencies.
+
+Once you have got all the required dependencies installed, you can install
+Encore by running:
+
+	$ python setup.py build
+	$ sudo python setup.py install
