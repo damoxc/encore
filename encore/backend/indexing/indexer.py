@@ -22,11 +22,12 @@
 
 import logging
 
+from encore.component import Component
 from encore.backend.indexing import handlers
 
 log = logging.getLogger(__name__)
 
-class Indexer(object):
+class Indexer(Component):
     """
     The main indexer that indexes all the media folders registered in
     Encore.
