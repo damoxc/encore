@@ -2,3 +2,4 @@ _trial_temp*
 *.egg-info
 *.egg-link
 *.pyc
+tests/data/tvdb-cache
