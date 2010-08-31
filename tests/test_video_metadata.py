@@ -20,7 +20,7 @@
 #   Boston, MA    02110-1301, USA.
 #
 
-from encore.backend.indexing.video_metadata_search import *
+from encore.backend.indexing.video_metadata import *
 
 from tests import EncoreTest
 
@@ -59,15 +59,26 @@ class TestVideoMetadataSeries(EncoreTest):
     """
 
     def test_get_series_metadata(self):
-        series = get_series_metadata('true blood')
-        self.assertTrue(isinstance(series, SeriesMetadata))
+        def got_series(series):
+            self.assertTrue(isinstance(series, SeriesMetadata))
+        return get_series_metadata('true blood').addCallback(got_series)
 
     def test_get_series_id(self):
-        series = get_series_metadata('true blood')
-        seriesl.assertEqual(series.id, '82283')
+        def got_series(series):
+            self.assertEqual(series.id, '82283')
+        return get_series_metadata('true blood').addCallback(got_series)
 
-    def test_get_series_banner(self):
-        pass
+    def test_get_episode(self):
+        def got_episode(episode):
+            self.assertTrue(isinstance(episode, EpisodeMetadata))
+            self.assertEqual(episode.id, '532631')
+        return get_episode_metadata(82283, 2, 3)
+
+    def test_get_season(self):
+        def got_season(season):
+            self.assertTrue(isinstance(season, SeasonMetadata))
+            self.assertEqual(season.season, '2')
+        return get_season_metadata(82283, 2)
 
 class TestVideoMetadataStripPath(EncoreTest):
     """

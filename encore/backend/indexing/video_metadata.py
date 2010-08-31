@@ -217,28 +217,45 @@ def get_series_metadata(title):
     :rtype: SeriesMetadata
     """
 
-    return SeriesMetadata(tvdb[title])
+    def got_series_metadata(series):
+        return SeriesMetadata(series._data)
+
+    return tvdb.get_series(title).addCallback(got_series_metadata)
 
 def get_season_metadata(title, season):
     """
     Search thetvdb.org for metadata for the season specified.
 
-    :param title: The series title
-    :type title: str
+    :param title: The series title or id
+    :type title: str/int
     :param season: The season number
     :type season: int
     :returns: Information about the season
     :rtype: SeasonMetadata
     """
 
-    return SeasonMetadata(tvdb[title][season])
+    def got_banners(banners, season):
+        return SeasonMetadata({
+            'season': season.season,
+            'series_id': season.series.id,
+            'poster': season.poster,
+        })
+
+    def got_series(series):
+        _season = series[season]
+        return _season.get_banners().addCallback(got_banners, _season)
+
+    if isinstance(title, int):
+        return tvdb.get_series_by_id(title).addCallback(got_series)
+    else:
+        return tvdb.get_series(title).addCallback(got_series)
 
 def get_episode_metadata(title, season, episode):
     """
     Search thetvdb.or for metadata for the episode specified.
 
-    :param title: The series title
-    :type title: str
+    :param title: The series title or id
+    :type title: str/int
     :param season: The season number
     :type season: int
     :param episode: The episode number
@@ -247,4 +264,15 @@ def get_episode_metadata(title, season, episode):
     :rtype: EpisodeMetadata
     """
 
-    return EpisodeMetadata(tvdb[title][season][episode])
+    def got_episode(episode):
+        return EpisodeMetadata(episode._data)
+
+    def got_series_metadata(series):
+        return tvdb.get_episode(series.id, season, episode).addCallback(
+            got_episode)
+
+    if isinstance(title, int):
+        return tvdb.get_episode(title, season, episode).addCallback(
+            got_episode)
+    else:
+        return tvdb.get_series(title).addCallback(got_series_metadata)

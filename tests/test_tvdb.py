@@ -23,7 +23,7 @@
 import os
 import subprocess
 
-from encore.backend.indexing.video_metadata_search import TVDB_KEY
+from encore.backend.indexing.video_metadata import TVDB_KEY
 from encore.lib.tvdb import TvDb, Series, Season, Episode
 
 from tests import EncoreTest
