@@ -36,6 +36,11 @@ movies = Table('movies', meta,
     Column('backdrop', String(100))
 )
 
+photos = Table('photos', meta,
+    Column('id', Integer, primary_key=True),
+    Column('path', String(200))
+)
+
 shows = Table('shows', meta,
     Column('id', Integer, primary_key=True),
     Column('series_id', String(10)),

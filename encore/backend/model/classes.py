@@ -26,6 +26,9 @@ from sqlalchemy.orm import mapper, backref, relation
 class Movie(object):
     pass
 
+class Photo(object):
+    pass
+
 class Show(object):
     pass
 
@@ -34,3 +37,9 @@ class Season(object):
 
 class Episode(object):
     pass
+
+mapper(Movie, movies)
+mapper(Photo, photos)
+mapper(Show, shows)
+mapper(Season, seasons)
+mapper(Episode, episodes)
