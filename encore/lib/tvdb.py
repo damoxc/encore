@@ -68,7 +68,7 @@ class Series(TvDbResponse):
 class Season(object):
     
     def __init__(self, series, season):
-        self._series = series
+        self.series = series
         self._tvdb = series._tvdb
         self.season = season
 
@@ -79,7 +79,7 @@ class Season(object):
         return self.banners[0]
 
     def get_banners(self):
-        return self._tvdb.get_banners(self._series.id).addCallback(
+        return self._tvdb.get_banners(self.series.id).addCallback(
             self._got_banners)
 
     def _got_banners(self, banners):
@@ -87,7 +87,7 @@ class Season(object):
         return self.banners
 
     def get_episode(self, episode):
-        return self._tvdb.get_episode(self._series.id, self.season, episode)
+        return self._tvdb.get_episode(self.series.id, self.season, episode)
 
 class Episode(TvDbResponse):
     pass
