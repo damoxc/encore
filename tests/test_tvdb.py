@@ -35,9 +35,7 @@ class TestTvDb(EncoreTest):
 
     def setUp(self):
         super(TestTvDb, self).setUp()
-
-        self.tvdb = TvDb(TVDB_KEY,
-            cache_dir = os.path.join(self.data_dir, 'tvdb-cache'))
+        self.tvdb = TvDb(TVDB_KEY)
 
     def test_constructor(self):
         self.assertTrue(isinstance(self.tvdb, TvDb))

@@ -29,6 +29,8 @@ import tempfile
 from twisted.web import client
 from twisted.internet import defer
 from twisted.internet.error import TCPTimedOutError
+
+from xdg.BaseDirectory import xdg_cache_home
 from xml.etree import cElementTree
 
 TVDB_URL = 'http://www.thetvdb.com'
@@ -117,14 +119,14 @@ class Banner(TvDbResponse):
 
 class TvDb(object):
 
-    def __init__(self, api_key, language='en', retry_limit=3,
-            cache_dir=None):
+    def __init__(self, api_key, language='en', retry_limit=3):
         self.api_key = api_key
         self.language = language
         self.retry_limit = retry_limit
-        self.cache_dir = cache_dir or tempfile.mkdtemp(prefix='tvdbapi+')
+
+        self.cache_dir = os.path.join(xdg_cache_home, 'encore', 'tvdb')
         if not os.path.isdir(self.cache_dir):
-            os.mkdir(self.cache_dir)
+            os.makedirs(self.cache_dir)
 
     @property
     def api_url(self):
