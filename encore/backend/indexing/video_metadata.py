@@ -163,8 +163,8 @@ def parse_path(path):
     if not match:
         return VideoFileInfo(
             title   = filename,
-            season  = 0,
-            episode = 0
+            season  = None,
+            episode = None
         )
 
     # Get the information from the regexp match
