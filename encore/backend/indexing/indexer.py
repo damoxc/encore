@@ -20,6 +20,7 @@
 #   Boston, MA    02110-1301, USA.
 #
 
+import os
 import logging
 
 from encore.component import Component
@@ -34,23 +35,21 @@ class Indexer(Component):
     """
 
     handlers = {
-        'avi': handlers.AviHandler(),
-        'jpg': handlers.JpegHandler(),
-        'm4v': None,
-        'mkv': None,
-        'mov': None,
-        'mp3': handlers.MP3Handler(,
-        'mp4': None,
-        'mpeg': None,
-        'mpg': None,
-        'ogg': None,
-        'ogm': None,
-        'png': None,
-        'wmv': None
+        'avi': handlers.VideoHandler(),
+        'jpg': handlers.ImageHandler(),
+        'jpeg': handlers.ImageHandler(),
+        'm4v': handlers.VideoHandler(),
+        'mkv': handlers.VideoHandler(),
+        'mov': handlers.VideoHandler(),
+        'mp3': handlers.MusicHandler(,
+        'mp4': handlers.VideoHandler(),
+        'mpeg': handlers.VideoHandler(),
+        'mpg': handlers.VideoHandler(),
+        'ogg': handlers.MusicHandler(),
+        'ogm': handlers.VideoHandler,
+        'png': handlers.ImageHandler(),
+        'wmv': handlers.VideoHandler()
     }
-
-    def __init__(self):
-        self.handlers['jpeg'] = self.handlers['jpg']
 
     def run(self):
         """
