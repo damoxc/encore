@@ -1,5 +1,5 @@
 #
-# encore/configuration.py
+# encore/config.py
 #
 # Copyright (C) 2010 Damien Churchill <damoxc@gmail.com>
 #
@@ -27,6 +27,7 @@ import shutil
 from xdg import BaseDirectory
 
 from encore.component import Component
+from encore.util.oproxy import ObjectProxy
 
 class Config(Component):
 
@@ -86,3 +87,6 @@ class Resources(object):
         data used by Encore.
         """
         os.mkdir(self.data_dir)
+
+
+config = ObjectProxy()
