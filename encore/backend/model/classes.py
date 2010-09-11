@@ -23,6 +23,8 @@
 from sqlalchemy import and_, join, desc, text
 from sqlalchemy.orm import mapper, backref, relation
 
+from encore.backend.model.tables import *
+
 class Movie(object):
     pass
 
