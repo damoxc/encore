@@ -54,7 +54,7 @@ shows = Table('shows', meta,
 
 seasons = Table('seasons', meta,
     Column('id', Integer, primary_key=True),
-    Column('show_id', Integer, ForeignKey('shows.id'),
+    Column('show_id', Integer, ForeignKey('shows.id')),
     Column('season', Integer),
     Column('banner', String(100))
 )
