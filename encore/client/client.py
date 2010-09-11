@@ -20,8 +20,10 @@
 #   Boston, MA    02110-1301, USA.
 #
 
+# Install the gtk2 reactor before reactor import
 from twisted.internet import gtk2reactor
-gtk2reactor.install() # Install the gtk2 reactor before reactor import
+gtk2reactor.install() 
+
 from twisted.internet import reactor
 
 class Client(object):
