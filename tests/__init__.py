@@ -27,7 +27,7 @@ import tempfile
 from twisted.trial import unittest
 
 from encore.config import Config
-from encore.model import Database
+from encore.backend.model import Database
 
 class EncoreTest(unittest.TestCase):
     """
