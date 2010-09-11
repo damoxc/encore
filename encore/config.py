@@ -39,6 +39,27 @@ class Config(Component):
         else:
             self.resources = Resources(config_testing_dir=test_dir)
 
+        self.cache_dir = self.resources.cache_dir
+        self.config_dir = self.resources.config_dir
+        self.data_dir = self.resources.data_dir
+
+        self.LOG_FILE = os.path.join(self.cache_dir, 'encore.log')
+        self.DB_FILE = os.path.join(self.cache_dir, 'media.db')
+
+        self.THUMB_DIR = os.path.join(self.cache_dir, 'thumbnails')
+        self.IMAGE_THUMB_DIR = os.path.join(self.THUMB_DIR, 'image')
+        self.VIDEO_THUMB_DIR = os.path.join(self.THUMB_DIR, 'video')
+        self.ALBUM_ART_DIR = os.path.join(self.cache_dir, 'album_art')
+        self.MOVIE_ART_DIR = os.path.join(self.cache_dir, 'movie_art')
+
+        self.read_config_file()
+
+        self.network_options = {
+            'type': 'local',
+            'host': 'localhost',
+            'port': 55545
+        }
+
 class Resources(object):
     """
     A warpper for the XDG directories. Also handles creation of a new setup
