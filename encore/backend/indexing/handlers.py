@@ -20,6 +20,11 @@
 #   Boston, MA    02110-1301, USA.
 #
 
+from encore.config import config
+from encore.backend.model import *
+from encore.backend.indexing.utilities import TagGetter
+from encore.backend.indexing.video_metadata import *
+
 class FileHandler(object):
     """
     Abstract class for all indexing file handlers.
@@ -31,10 +36,60 @@ class FileHandler(object):
     def __call__(self, filename):
         raise NotImplementedError
 
-class AviHandler(FileHandler):
+class VideoHandler(FileHandler):
     """
-    Handler for AVI files.
+    Base-class for indexing video files.
     """
 
     def __call__(self, filename):
-        raise NotImplementedError
+        file_info = parse_path(filename)
+        if file_info.season:
+            self._handle_series(filename, file_info)
+        else:
+            self._handle_movie(filename, file_info)
+
+    def _handle_series(self, filename, file_info):
+        if db.query(Episode).filter_by(path=filename).first():
+            return self._update_series_file(filename, file_info)
+        else:
+            return self._add_series_file(filename, file_info)
+
+    def _add_series_file(self, filename, file_info):
+        """
+        Add a new episode to the store.
+        """
+
+    def _update_series_file(self, filename, file_info):
+        """
+        Update an episode in the store.
+        """
+
+class ImageHandler(FileHandler):
+    """
+    Handler for jpg/jpeg files.
+    """
+
+    def __call__(self, filename):
+        if db.query(Photo).filter_by(path=filename).first():
+            return self._update_file(filename)
+        else:
+            return self._add_file(filename)
+
+    def _add_file(self, filename):
+        """
+        Add a photo to the store.
+        """
+        photo = Photo()
+        photo.path = unicode(filename)
+
+        db.add(photo)
+        db.commit()
+        return photo
+
+    def _update_file(self, filename):
+        """
+        Update an existing image in the store.
+        """
+        # TODO: There's no metadata currently, so just return the existing
+        # object.
+        return db.query(Photo).filter_by(path=filename).one()
