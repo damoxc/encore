@@ -59,7 +59,7 @@ class Resources(object):
 
         # Ensure that the directories exist.
         if not os.path.exists(self.cache_dir):
-            self.create_cache_hierachy()
+            self.create_cache_hierarchy()
         if not os.path.exists(self.config_dir):
             self.create_configuration()
         if not os.path.exists(self.data_dir):
