@@ -20,41 +20,37 @@
 #   Boston, MA    02110-1301, USA.
 #
 
-class IResourceProvider(object):
+from zope.interface import Interface, Attribute, implements
+
+class IResourceProvider(Interface):
     pass
 
 class IVideoProvider(IResourceProvider):
     pass
 
-class IMusicProvider(IMusicProvider):
+class IMusicProvider(IResourceProvider):
     pass
 
-class IPhotoProvider(IPhotoProvider):
+class IPhotoProvider(IResourceProvider):
     pass
 
-class IPlayable(object):
+class IPlayable(Interface):
     """
     Interface for all objects that can be played with the MediaPlayer.
     The MediaPlayer only plays objects that implement this interface.
     """
 
-    VIDEO_STREAM = 0
-    AUDIO_STREAM = 1
-
-    def get_uri(self):
+    def get_uri():
         """
         Get the URI for the media resource.
         """
-        raise NotImplementedError
 
-    def get_type(self):
+    def get_type():
         """
         Get the type (as defined by the IPlayable constants.
         """
-        raise NotImplementedError
 
-    def get_title(self):
+    def get_title():
         """
         Get the title of the object.
         """
-        raise NotImplementedError
