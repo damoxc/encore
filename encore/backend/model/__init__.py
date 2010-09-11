@@ -20,5 +20,10 @@
 #   Boston, MA    02110-1301, USA.
 #
 
-class Database(object):
-    pass
+from encore.backend.model.classes import *
+from encore.component import Component
+
+class Database(Component):
+
+    def __init__(self):
+        super(Database, self).__init__('Database')
