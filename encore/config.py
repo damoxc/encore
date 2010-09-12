@@ -27,7 +27,7 @@ import shutil
 from xdg import BaseDirectory
 
 from encore.component import Component
-from encore.util.oproxy import ObjectProxy
+from encore.utils.oproxy import ObjectProxy
 
 class Config(Component):
 
