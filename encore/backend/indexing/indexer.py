@@ -24,6 +24,7 @@ import os
 import logging
 
 from encore.component import Component
+from encore.config import config
 from encore.backend.indexing import handlers
 
 log = logging.getLogger(__name__)
@@ -41,12 +42,12 @@ class Indexer(Component):
         'm4v': handlers.VideoHandler(),
         'mkv': handlers.VideoHandler(),
         'mov': handlers.VideoHandler(),
-        'mp3': handlers.MusicHandler(,
+        'mp3': handlers.MusicHandler(),
         'mp4': handlers.VideoHandler(),
         'mpeg': handlers.VideoHandler(),
         'mpg': handlers.VideoHandler(),
         'ogg': handlers.MusicHandler(),
-        'ogm': handlers.VideoHandler,
+        'ogm': handlers.VideoHandler(),
         'png': handlers.ImageHandler(),
         'wmv': handlers.VideoHandler()
     }
@@ -55,6 +56,7 @@ class Indexer(Component):
         """
         Start the indexer running.
         """
+        print config
 
     @property
     def supported_filetypes(self):
