@@ -55,16 +55,41 @@ class VideoHandler(FileHandler):
         """
         Add a new episode to the store.
         """
-        get_series_metadata(file_info.title).addCallback(self._got_series_metadata)
+        get_series_metadata(file_info.title).addCallback
+            self._got_series_metadata)
+
+        get_season_metadata(file_info.title, file_info.season).addCallback(
+            self._got_season_metadata)
 
     def _got_series_metadata(self, series):
-        if not db.query(Show).filter_by(series_id=series.id).first():
-            # TODO: Add series to db
-            pass
+        show = db.query(Show).filter_by(series_id=series.id).first()
+
+        # If the show doesn't exist it needs to be created
+        if not show:
+            show = Show()
+            db.add(show)
+
+        # Add or update the show metadata
+        show.series_id = series.id
+        show.title = series.seriesname
+        show.description = series.overview
+        show.genre = series.genre
+        show.rating = series.rating
+        show.cover = series.poster
+        show.backdrop = series.fanart
+        db.commit()
+
+    def _got_season_metadata(self, season):
+        pass
 
     def _update_series_file(self, filename, file_info):
         """
         Update an episode in the store.
+        """
+
+    def _handle_movie(self, filename, file_info):
+        """
+        Handle movies
         """
 
 class ImageHandler(FileHandler):
