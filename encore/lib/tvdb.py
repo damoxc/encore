@@ -214,14 +214,14 @@ class TvDb(object):
         series = series.replace(' ', '+')
         url = '%s/api/GetSeries.php?seriesname=%s' % (TVDB_URL, series)
         return self._request(url).addCallback(
-            self._on_got_series)
+            self._on_got_series, series)
 
-    def _on_got_series(self, results):
+    def _on_got_series(self, results, series_name):
         etree = cElementTree.fromstring(results)
 
         # Check to see if any series were found
         if not etree:
-            raise SeriesNotFoundError
+            raise SeriesNotFoundError("Cannot find '%s'", series_name)
 
         # Get the first match
         series = None
@@ -231,7 +231,7 @@ class TvDb(object):
 
         # Ensure that there has been a match
         if not series:
-            raise SeriesNotFoundError
+            raise SeriesNotFoundError("Cannot find '%s'", series_name)
 
         return self.get_series_by_id(series['id'])
 
