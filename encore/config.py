@@ -31,13 +31,15 @@ from encore.utils.oproxy import ObjectProxy
 
 class Config(Component):
 
-    def __init__(self, test_dir=None):
+    def __init__(self):
         super(Config, self).__init__('Config')
+        self.test_dir = None
 
-        if test_dir is None:
+    def initialize(self):
+        if self.test_dir is None:
             self.resources = Resources()
         else:
-            self.resources = Resources(config_testing_dir=test_dir)
+            self.resources = Resources(config_testing_dir=self.test_dir)
 
         self.cache_dir = self.resources.cache_dir
         self.config_dir = self.resources.config_dir
@@ -59,6 +61,9 @@ class Config(Component):
             'host': 'localhost',
             'port': 55545
         }
+
+    def read_config_file(self):
+        pass
 
 class Resources(object):
     """
@@ -110,4 +115,4 @@ class Resources(object):
         os.mkdir(self.data_dir)
 
 
-config = ObjectProxy()
+config = Config()
