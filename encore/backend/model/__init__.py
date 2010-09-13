@@ -20,10 +20,39 @@
 #   Boston, MA    02110-1301, USA.
 #
 
+import os
+
+from sqlalchemy import create_engine, func, text
+from sqlalchemy.orm import sessionmaker, scoped_session
+
 from encore.backend.model.classes import *
 from encore.component import Component
+from encore.config import config
 
 class Database(Component):
 
     def __init__(self):
         super(Database, self).__init__('Database')
+        self.engine = None
+        
+    def initialize(self):
+        dburi = 'sqlite:///' + config.DB_FILE
+        self.engine = create_engine(dburi)
+        sm = sessionmaker(autoflush=False, autocommit=False,
+            bind=self.engine)
+        self.Session = scoped_session(sm)
+
+        # Create the database if it doesn't already exist
+        if not os.path.isfile(config.DB_FILE):
+            meta.create_all(bind=self.engine)
+
+    def commit(self):
+        return self.Session.commit()
+
+    def query(self, *args, **kwargs):
+        return self.Session.query(*args, **kwargs)
+
+    def session(self):
+        return self.Session()
+
+db = Database()
