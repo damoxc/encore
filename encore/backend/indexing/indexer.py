@@ -35,6 +35,9 @@ class Indexer(Component):
     Encore.
     """
 
+    def __init__(self):
+        super(Indexer, self).__init__('Indexer')
+
     handlers = {
         'avi': handlers.VideoHandler(),
         'jpg': handlers.ImageHandler(),
@@ -56,7 +59,22 @@ class Indexer(Component):
         """
         Start the indexer running.
         """
-        print config
+        # TODO: add logic for retrieving media directories here
+
+    def scan_directory(self, directory):
+        """
+        Scans a directory for media.
+
+        :param directory: The directory to scan
+        :type directory: str
+        """
+
+        for path, dirs, files in os.walk(directory):
+            for fn in files:
+                fn_ext = os.path.splitext(fn)[1][1:]
+                if fn_ext not in self.handlers:
+                    continue
+                self.handlers[fn_ext](os.path.join(path, fn))
 
     @property
     def supported_filetypes(self):
