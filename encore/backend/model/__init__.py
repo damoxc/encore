@@ -46,6 +46,9 @@ class Database(Component):
         if not os.path.isfile(config.DB_FILE):
             meta.create_all(bind=self.engine)
 
+    def add(self, *args):
+        return self.Session.add(*args)
+
     def commit(self):
         return self.Session.commit()
 
