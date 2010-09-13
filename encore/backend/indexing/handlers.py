@@ -55,6 +55,12 @@ class VideoHandler(FileHandler):
         """
         Add a new episode to the store.
         """
+        get_series_metadata(file_info.title).addCallback(self._got_series_metadata)
+
+    def _got_series_metadata(self, series):
+        if not db.query(Show).filter_by(series_id=series.id).first():
+            # TODO: Add series to db
+            pass
 
     def _update_series_file(self, filename, file_info):
         """
