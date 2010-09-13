@@ -30,9 +30,6 @@ class FileHandler(object):
     Abstract class for all indexing file handlers.
     """
 
-    def __init__(self):
-        pass
-
     def __call__(self, filename):
         raise NotImplementedError
 
@@ -93,3 +90,11 @@ class ImageHandler(FileHandler):
         # TODO: There's no metadata currently, so just return the existing
         # object.
         return db.query(Photo).filter_by(path=filename).one()
+
+class MusicHandler(FileHandler):
+    """
+    Handler for music files.
+    """
+
+    def __call__(self, filename):
+        pass
