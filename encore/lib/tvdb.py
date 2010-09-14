@@ -123,6 +123,7 @@ class TvDb(object):
         self.api_key = api_key
         self.language = language
         self.retry_limit = retry_limit
+        self.mirror = TVDB_URL
 
         self.cache_dir = os.path.join(xdg_cache_home, 'encore', 'tvdb')
         if not os.path.isdir(self.cache_dir):
@@ -130,7 +131,7 @@ class TvDb(object):
 
     @property
     def api_url(self):
-        return '%s/api/%s/' % (TVDB_URL, self.api_key)
+        return '%s/api/%s/' % (self.mirror, self.api_key)
 
     def _on_api_error(self, failure, url, count):
         if failure.type is TCPTimedOutError and count < self.retry_limit:
@@ -154,8 +155,14 @@ class TvDb(object):
             log.exception(e)
         return response
 
-    def _request(self, url, count=0):
-        log.debug("requesting '%s', count is %d", url, count)
+    def _request(self, path, count=0, key=True):
+        log.debug("using mirror '%s' with key '%s'", self.mirror, self.api_key)
+        log.debug("requesting '%s', count is %d", path, count)
+
+        if key:
+            url = '%s/api/%s/%s' % (self.mirror, self.api_key, path)
+        else:
+            url = '%s/api/%s' % (self.mirror, path)
 
         # Attempt to get the information from the cache
         url_hash = hashlib.sha1(url).hexdigest()
@@ -177,7 +184,7 @@ class TvDb(object):
         """
         Return the supported languages by the tvdb
         """
-        return self._request(self.api_url + 'languages.xml').addCallback(
+        return self._request('languages.xml').addCallback(
             self._on_got_languages)
 
     def _on_got_languages(self, langs):
@@ -196,7 +203,7 @@ class TvDb(object):
         thetvdb.org.
         """
 
-        return client.getPage(self.api_url + 'mirrors.xml').addCallbacks(
+        self._request('mirrors.xml').addCallbacks(
             self._on_got_mirrors,
             self._on_api_error
         )
@@ -211,9 +218,8 @@ class TvDb(object):
         :param series: The series name to look for
         :type series: str
         """
-        series = series.replace(' ', '+')
-        url = '%s/api/GetSeries.php?seriesname=%s' % (TVDB_URL, series)
-        return self._request(url).addCallback(
+        url = 'GetSeries.php?seriesname=' + series.replace(' ', '+')
+        return self._request(url, key=False).addCallback(
             self._on_got_series, series)
 
     def _on_got_series(self, results, series_name):
@@ -243,7 +249,7 @@ class TvDb(object):
         :type series_id: int
         """
 
-        url = self.api_url + 'series/%s/%s.xml' % (series_id, self.language)
+        url = 'series/%s/%s.xml' % (series_id, self.language)
         return self._request(url).addCallback(
             self._on_got_series_details)
 
@@ -265,7 +271,7 @@ class TvDb(object):
         :type series_id: int
         """
 
-        url = self.api_url + 'series/%s/banners.xml' % series_id
+        url = 'series/%s/banners.xml' % series_id
         return self._request(url).addCallback(
             self._on_got_banners)
 
@@ -291,7 +297,7 @@ class TvDb(object):
         :param episode: The episode numbe
         :type episode: int
         """
-        url = self.api_url + 'series/%s/default/%s/%s/%s.xml' % (
+        url = 'series/%s/default/%s/%s/%s.xml' % (
             series_id, season, episode, self.language)
         return self._request(url).addCallback(
             self._on_got_episode)
