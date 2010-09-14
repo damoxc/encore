@@ -23,6 +23,7 @@
 import os
 import json
 import shutil
+import subprocess
 
 from xdg import BaseDirectory
 
@@ -34,6 +35,7 @@ class Config(Component):
     def __init__(self):
         super(Config, self).__init__('Config')
         self.test_dir = None
+        self._config = {}
 
     def initialize(self):
         if self.test_dir is None:
@@ -61,6 +63,46 @@ class Config(Component):
             'host': 'localhost',
             'port': 55545
         }
+
+    def get_video_directories(self):
+        """
+        Returns all the directories configured to scan for video content.
+
+        :returns: list of the directories
+        :rtype: list
+        """
+
+        if 'video_dirs' in self._config:
+            return self._config['video_dirs']
+
+        # TODO: Move this code into a common function to make it easier
+        # to load up other directories.
+
+        # Check for the ~/.config/user-dirs.dirs file
+        user_dirs = BaseDirectory.load_first_config('user-dirs.dirs')
+        if not user_dirs:
+            # Attempt to generate out the default user-dirs.dirs config
+            try:
+                subprocess.call(['xdg-user-dirs-update'])
+            except OSError:
+                return []
+
+        # If the file still doesn't exist then something is very wrong
+        # so just fail with an empty list.
+        if not BaseDirectory.load_first_config('user-dirs.dirs'):
+            return []
+
+        # Load the user-dirs.dirs config file to get the configured videos
+        # directory.
+        for line in open(BaseDirectory.load_first_config('user-dirs.dirs')):
+            line = line.strip()
+            if line.startswith('#'):
+                continue
+            (name, value) = line.split('=', 1)
+            if name == 'XDG_VIDEOS_DIR':
+                return [os.path.expandvars(value[1:-1])]
+
+        return []
 
     def read_config_file(self):
         pass
