@@ -55,7 +55,7 @@ class VideoHandler(FileHandler):
         """
         Add a new episode to the store.
         """
-        get_series_metadata(file_info.title).addCallback
+        get_series_metadata(file_info.title).addCallback(
             self._got_series_metadata)
 
         get_season_metadata(file_info.title, file_info.season).addCallback(
