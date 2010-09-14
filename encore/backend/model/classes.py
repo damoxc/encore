@@ -43,5 +43,9 @@ class Episode(object):
 mapper(Movie, movies)
 mapper(Photo, photos)
 mapper(Show, shows)
-mapper(Season, seasons)
-mapper(Episode, episodes)
+mapper(Season, seasons, properties = {
+    'show': relation(Show, uselist=False, backref='seasons')
+})
+mapper(Episode, episodes, properties = {
+    'season': relation(Season, uselist=False, backref='episodes')
+})

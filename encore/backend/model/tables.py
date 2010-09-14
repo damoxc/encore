@@ -21,50 +21,66 @@
 #
 
 from sqlalchemy import MetaData, Table, Column, ForeignKey
+from sqlalchemy import PrimaryKeyConstraint, ForeignKeyConstraint
 from sqlalchemy import Boolean, DateTime, Float, Integer, String, Text, Time
 
 meta = MetaData()
 
 movies = Table('movies', meta,
-    Column('id', Integer, primary_key=True),
+    Column('id', Integer),
     Column('movie_id', String(10)),
     Column('path', String(200)),
     Column('description', Text),
     Column('genre', String(100)),
     Column('rating', Float),
     Column('cover', String(100)),
-    Column('backdrop', String(100))
+    Column('backdrop', String(100)),
+    PrimaryKeyConstraint('id')
 )
 
 photos = Table('photos', meta,
-    Column('id', Integer, primary_key=True),
-    Column('path', String(200))
+    Column('id', Integer),
+    Column('path', String(200)),
+    PrimaryKeyConstraint('id')
 )
 
 shows = Table('shows', meta,
-    Column('id', Integer, primary_key=True),
+    Column('id', Integer),
     Column('series_id', Integer),
     Column('title', String(100)),
     Column('description', Text),
     Column('genre', String(100)),
     Column('rating', Float),
     Column('cover', String(100)),
-    Column('backdrop', String(100))
+    Column('backdrop', String(100)),
+    PrimaryKeyConstraint('id')
 )
 
 seasons = Table('seasons', meta,
-    Column('id', Integer, primary_key=True),
-    Column('show_id', Integer, ForeignKey('shows.id')),
-    Column('season', Integer),
-    Column('banner', String(100))
+    Column('show_id', Integer),
+    Column('number', Integer),
+    Column('banner', String(100)),
+    PrimaryKeyConstraint('show_id', 'number'),
+    ForeignKeyConstraint(['show_id'], ['shows.id'])
 )
 
 episodes = Table('episodes', meta,
     Column('id', Integer, primary_key=True),
-    Column('show_id', Integer, ForeignKey('shows.id')),
+    Column('show_id', Integer),
     Column('path', String(200)),
-    Column('season', Integer),
+    Column('season_number', Integer),
     Column('episode', Integer),
     Column('title', String(100)),
-    Column('image', String(100))
+    Column('overview', Text),
+    Column('rating', Float),
+    Column('writer', String(100)),
+    Column('director', String(100)),
+    Column('guest_stars', String(250)),
+    Column('image', String(100)),
+    Column('lastupdated', Integer),
+    PrimaryKeyConstraint('id'),
+    ForeignKeyConstraint(
+        ['show_id', 'season_number'],
+        ['seasons.show_id', 'seasons.number']
+    )
 )
