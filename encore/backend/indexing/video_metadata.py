@@ -58,8 +58,8 @@ SERIES_FILENAME_RE = [
 
 # RegExps to try and match a series path
 SERIES_PATH_RE = [
-    re.compile(r'(?P<title>.*?)/[a-zA-Z]+\s+(?P<season>\d{1,2})/(?P<episode>\d{1,2})'),
-    re.compile(r'(?P<title>.*?)\s*?(/|-)\s*[a-zA-Z]+\s+(?P<season>\d{1,2})/(?P<episode>\d{1,2})')
+    re.compile(r'(?P<title>.*?)/[a-zA-Z]+\s+(?P<season>\d{1,2})/[^/]*?(?P<episode>\d{1,2})[^/]*?'),
+    re.compile(r'(?P<title>.*?)\s*?(/|-)\s*[a-zA-Z]+\s+(?P<season>\d{1,2})/[^/]*?(?P<episode>\d{1,2})[^/]*?')
 ]
 
 VideoFileInfo = namedtuple('VideoFileInfo', 'title episode season')
@@ -147,16 +147,16 @@ def parse_path(path):
     # Strip the filename
     filename = strip_filename(os.path.basename(path))
 
-    # Search the path for the title, season and episode
-    for regexp in SERIES_PATH_RE:
-        match = regexp.search(path)
+    # Search the filename for the title, season and episode
+    for regexp in SERIES_FILENAME_RE:
+        match = regexp.search(filename)
         if match:
             break
 
+    # Search the path for the title, season and episode
     if not match:
-        # Search the filename for the title, season and episode
-        for regexp in SERIES_FILENAME_RE:
-            match = regexp.search(filename)
+        for regexp in SERIES_PATH_RE:
+            match = regexp.search(path)
             if match:
                 break
 
