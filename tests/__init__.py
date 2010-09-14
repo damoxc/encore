@@ -40,7 +40,9 @@ class EncoreTest(unittest.TestCase):
         """
         self.test_dir = tempfile.mkdtemp(prefix='encore-tests+')
         self.test_cfg_dir = tempfile.mkdtemp(prefix='encore-tests+')
-        self.config = Config(self.test_cfg_dir)
+        self.config = Config()
+        self.config.test_dir = self.test_cfg_dir
+        self.config.initialize()
         self.data_dir = os.path.dirname(__file__) + '/data'
 
     def tearDown(self):
