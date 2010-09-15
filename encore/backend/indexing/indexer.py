@@ -23,6 +23,8 @@
 import os
 import logging
 
+from twisted.internet import defer, reactor
+
 from encore.component import Component
 from encore.config import config
 from encore.backend.indexing import handlers
@@ -55,6 +57,11 @@ class Indexer(Component):
         'wmv': handlers.VideoHandler()
     }
 
+    def initialize(self):
+        """
+        Do any initialization required to start the Indexer Component.
+        """
+
     def run(self):
         """
         Start the indexer running.
@@ -69,12 +76,15 @@ class Indexer(Component):
         :type directory: str
         """
 
+        deferreds = []
         for path, dirs, files in os.walk(directory):
             for fn in files:
                 fn_ext = os.path.splitext(fn)[1][1:]
                 if fn_ext not in self.handlers:
                     continue
-                self.handlers[fn_ext](os.path.join(path, fn))
+                deferreds.append(self.handlers[fn_ext](os.path.join(path,
+                    fn)))
+        return defer.DeferredList(deferreds)
 
     @property
     def supported_filetypes(self):

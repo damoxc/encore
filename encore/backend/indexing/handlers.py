@@ -20,15 +20,31 @@
 #   Boston, MA    02110-1301, USA.
 #
 
+import logging
+
+from twisted.internet import reactor, defer
+
 from encore.config import config
 from encore.backend.model import *
 from encore.backend.indexing.utilities import TagGetter
 from encore.backend.indexing.video_metadata import *
 
+log = logging.getLogger(__name__)
+
 class FileHandler(object):
     """
     Abstract class for all indexing file handlers.
     """
+
+    def __init__(self):
+        self.deferreds = {}
+
+    def _deferred(self, filename):
+        self.deferreds[filename] = defer.Deferred()
+        return self.deferreds[filename]
+
+    def _callback(self, filename, result):
+        self.deferreds.pop(filename).callback(result)
 
     def __call__(self, filename):
         raise NotImplementedError
@@ -41,28 +57,26 @@ class VideoHandler(FileHandler):
     def __call__(self, filename):
         file_info = parse_path(filename)
         if file_info.season:
-            self._handle_series(filename, file_info)
+            reactor.calllLater(0, self._handle_series, filename, file_info)
         else:
-            self._handle_movie(filename, file_info)
+            reactor.callLater(0, self._handle_movie, filename, file_info)
+        return self._deferred(filename)
 
     def _handle_series(self, filename, file_info):
-        if db.query(Episode).filter_by(path=filename).first():
-            return self._update_series_file(filename, file_info)
+        """
+        Add or update an episode to the store.
+        """
+        show = db.query(Show).filter(Show.title.like(file_info.title)).first()
+        if not show:
+            get_series_metadata(file_info.title).addCallback(
+                self._got_series_metadata, filename, file_info)
         else:
-            return self._add_series_file(filename, file_info)
+            pass
 
-    def _add_series_file(self, filename, file_info):
+    def _got_series_metadata(self, data, filename, file_info):
         """
-        Add a new episode to the store.
+        Handles adding or updating the series metadata in the database.
         """
-        get_series_metadata(file_info.title).addCallback(
-            self._got_series_metadata)
-
-        get_season_metadata(file_info.title, file_info.season).addCallback(
-            self._got_season_metadata)
-
-    def _got_series_metadata(self, series):
-        show = db.query(Show).filter_by(series_id=series.id).first()
 
         # If the show doesn't exist it needs to be created
         if not show:
@@ -70,17 +84,71 @@ class VideoHandler(FileHandler):
             db.add(show)
 
         # Add or update the show metadata
-        show.series_id = series.id
-        show.title = series.seriesname
-        show.description = series.overview
-        show.genre = series.genre
-        show.rating = series.rating
-        show.cover = series.poster
-        show.backdrop = series.fanart
+        show.series_id = int(data.id)
+        show.title = data.seriesname
+        show.description = data.overview
+        show.genre = data.genre
+        show.rating = data.rating
+        show.cover = data.poster
+        show.backdrop = data.fanart
         db.commit()
 
-    def _got_season_metadata(self, season):
-        pass
+        return get_season_metadata(show.series_id,
+            file_info.season).addCallback(self._got_season_metadata,
+                show, filename, file_info)
+
+    def _got_season_metadata(self, data, show, filename, file_info):
+        """
+        Handles adding or updating the season metadata to the database.
+        """
+        season = db.query(Season).filter_by(show_id=show.id).first()
+
+        # If the season doesn't exist, needs to be created
+        if not season:
+            season = Season()
+            show.seasons.append(season)
+
+        season.number = data.season
+        db.commit()
+        
+        log.info('Fetching metadata for %s S%dE%d', file_info.title,
+            file_info.season, file_info.episode)
+        return get_episode_metadata(show.series_id, season.number,
+            file_info.episode).addCallback(self._got_episode_metadata,
+                season, filename, file_info)
+
+    def _got_episode_metadata(self, data, season, filename, file_info):
+        """
+        Handles adding or updating the episode metadata in the database.
+        """
+        episode = db.query(Episode).filter_by(
+            season  = season,
+            episode = file_info.episode).first()
+
+        # Create the Episode is need be
+        if not episode:
+            log.debug('Adding %s S%dE%d to the database', file_info.title,
+                file_info.season, file_info.episode)
+            episode = Episode()
+            episode.episode = file_info.episode
+            season.episodes.append(episode)
+
+        # Set the path just in case the file has been moved
+        episode.path = filename
+
+        # Update any metadata that we need to
+        if episode.lastupdated < int(data.lastupdated):
+            episode.title = data.episodename
+            episode.overview = data.overview
+            episode.rating = data.rating
+            episode.writer = data.writer
+            episode.director = data.director
+            episode.guest_stars = data.gueststars
+            episode.lastupdated = data.lastupdated
+
+        db.commit()
+        #self._callback(filename, episode)
+        return episode
 
     def _update_series_file(self, filename, file_info):
         """
@@ -99,9 +167,10 @@ class ImageHandler(FileHandler):
 
     def __call__(self, filename):
         if db.query(Photo).filter_by(path=filename).first():
-            return self._update_file(filename)
+            self._update_file(filename)
         else:
-            return self._add_file(filename)
+            self._add_file(filename)
+        return self._deferred(filename)
 
     def _add_file(self, filename):
         """
@@ -128,4 +197,4 @@ class MusicHandler(FileHandler):
     """
 
     def __call__(self, filename):
-        pass
+        return self._deferred(filename)
