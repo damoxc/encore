@@ -168,6 +168,14 @@ class TestVideoMetadataParsePath(EncoreTest):
         video_info = parse_path(filename)
         self.assertEqual(video_info.episode, 5)
 
+        filename = '/home/user/videos/Futurama/Season 2/something 05.avi'
+        video_info = parse_path(filename)
+        self.assertEqual(video_info.episode, 5)
+
         filename = '/home/user/videos/Futurama - Season 2/05 something.avi'
+        video_info = parse_path(filename)
+        self.assertEqual(video_info.episode, 5)
+
+        filename = '/home/user/videos/Futurama - Season 2/something 05.avi'
         video_info = parse_path(filename)
         self.assertEqual(video_info.episode, 5)
