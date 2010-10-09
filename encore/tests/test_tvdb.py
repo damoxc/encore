@@ -23,6 +23,8 @@
 import os
 import subprocess
 
+from twisted.internet.defer import DeferredList
+
 from encore.backend.indexing.video_metadata import TVDB_KEY
 from encore.lib.tvdb import TvDb, Series, Season, Episode
 
@@ -112,3 +114,20 @@ class TestTvDb(EncoreTest):
             self.assertEqual(episode.id, '532631')
 
         return self.tvdb.get_episode(82283, 2, 3).addCallback(got_episode)
+
+    def test_concurrency(self):
+
+        deferreds = []
+        for s in xrange(1, 4):
+            for e in xrange(1, 13):
+                
+                def got_episode(episode):
+                    self.assertTrue(isinstance(episode, Episode))
+
+                deferreds.append(self.tvdb.get_episode(82283, s, e
+                    ).addCallback(got_episode))
+
+        def completed(result):
+            print result
+
+        return DeferredList(deferreds).addCallback(completed)
