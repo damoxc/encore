@@ -1,5 +1,5 @@
 #
-# tests/test_video_video_info.py
+# encore/tests/test_video_video_info.py
 #
 # Copyright (C) 2010 Damien Churchill <damoxc@gmail.com>
 #
@@ -22,7 +22,7 @@
 
 from encore.backend.indexing.video_metadata import *
 
-from tests import EncoreTest
+from encore.tests.test import EncoreTest
 
 class TestVideoMetadataMovie(EncoreTest):
     """

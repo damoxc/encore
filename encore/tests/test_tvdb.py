@@ -1,5 +1,5 @@
 #
-# tests/test_tvdb.py
+# encore/tests/test_tvdb.py
 #
 # Copyright (C) 2010 Damien Churchill <damoxc@gmail.com>
 #
@@ -26,7 +26,7 @@ import subprocess
 from encore.backend.indexing.video_metadata import TVDB_KEY
 from encore.lib.tvdb import TvDb, Series, Season, Episode
 
-from tests import EncoreTest
+from encore.tests.test import EncoreTest
 
 class TestTvDb(EncoreTest):
     """

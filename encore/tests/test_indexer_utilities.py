@@ -1,5 +1,5 @@
 #
-# tests/test_indexer_utilities.py
+# encore/tests/test_indexer_utilities.py
 #
 # Copyright (C) 2010 Damien Churchill <damoxc@gmail.com>
 #
@@ -21,12 +21,12 @@
 #
 
 import os
-import tests
 import datetime
 
+from encore.tests.test import EncoreTest
 from encore.backend.indexing.utilities import TagGetter
 
-class TestTagGetter(tests.EncoreTest):
+class TestTagGetter(EncoreTest):
     """
     Tests for encore.backend.indexing.utilities.TagGetter.
     """
