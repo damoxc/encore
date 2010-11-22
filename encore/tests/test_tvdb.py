@@ -116,18 +116,18 @@ class TestTvDb(EncoreTest):
         return self.tvdb.get_episode(82283, 2, 3).addCallback(got_episode)
 
     def test_concurrency(self):
-
+        """
+        Test sending a lot of requests at once to see how the tvdb api
+        handles connection limiting.
+        """
         deferreds = []
         for s in xrange(1, 4):
             for e in xrange(1, 13):
-                
-                def got_episode(episode):
-                    self.assertTrue(isinstance(episode, Episode))
+                deferreds.append(self.tvdb.get_episode(82283, s, e))
 
-                deferreds.append(self.tvdb.get_episode(82283, s, e
-                    ).addCallback(got_episode))
-
-        def completed(result):
-            print result
+        def completed(results):
+            for (success, episode) in results:
+                self.assertTrue(success)
+                self.assertIsInstance(episode, Episode)
 
         return DeferredList(deferreds).addCallback(completed)
